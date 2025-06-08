@@ -208,6 +208,13 @@ namespace Microsoft.Xna.Framework.Graphics
         }
 
         /// <inheritdoc cref="MeasureString(string, int, int)"/>
+        public Vector2 MeasureString(CharacterSource text)
+        {
+            MeasureString(text, out Vector2 size);
+            return size;
+        }
+
+        /// <inheritdoc cref="MeasureString(string, int, int)"/>
         public unsafe void MeasureString(CharacterSource text, out Vector2 size)
         {
             if (text.Length == 0)
@@ -217,10 +224,26 @@ namespace Microsoft.Xna.Framework.Graphics
             }
 
             float width = 0.0f;
-            float finalLineHeight = (float)LineSpacing;
-
+            float finalLineHeight = LineSpacing;
             Vector2 offset = Vector2.Zero;
             bool firstGlyphOfLine = true;
+
+            size = MeasureString(text, ref width, ref  finalLineHeight, ref offset, ref firstGlyphOfLine);
+        }
+
+        /// <summary>
+        /// Measure a string.
+        /// </summary>
+        /// <param name="text"> The text to measure. </param>
+        /// <param name="width"> The current with of the text. Initial = 0 </param>
+        /// <param name="finalLineHeight"> The line height. Increases based on tall characters. Initial = <see cref="LineSpacing"/> </param>
+        /// <param name="offset"> The current draw offset of the string. The X dimension offset is included in the width. Initial = <see cref="Vector2.Zero"/> </param>
+        /// <param name="firstGlyphOfLine"> If the current character is the beginning of the string or after a newline. Initial = <see langword="true"/></param>
+        /// <returns></returns>
+        public unsafe Vector2 MeasureString(CharacterSource text, ref float width, ref float finalLineHeight, ref Vector2 offset, ref bool firstGlyphOfLine)
+        {
+            if (text.Length == 0)
+                return Vector2.Zero;
 
             fixed (Glyph* pGlyphs = Glyphs)
             {
@@ -230,8 +253,7 @@ namespace Microsoft.Xna.Framework.Graphics
                 }
             }
 
-            size.X = width;
-            size.Y = offset.Y + finalLineHeight;
+            return new(width, offset.Y + finalLineHeight);
         }
 
         /// <summary>

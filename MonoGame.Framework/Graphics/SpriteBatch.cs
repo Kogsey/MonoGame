@@ -588,7 +588,7 @@ namespace Microsoft.Xna.Framework.Graphics
         /// <param name="text">The text which will be drawn.</param>
         /// <param name="position">The drawing location on screen.</param>
         /// <param name="color">A color mask.</param>
-        private unsafe void DrawString(SpriteFont spriteFont, CharacterSource text, in Vector2 position, in Color color)
+        public unsafe void DrawString(SpriteFont spriteFont, CharacterSource text, in Vector2 position, in Color color)
         {
             float sortKey = (_sortMode == SpriteSortMode.Texture) ? spriteFont.Texture.SortingKey : 0;
 
@@ -729,7 +729,7 @@ namespace Microsoft.Xna.Framework.Graphics
         /// <param name="scale">A scaling of this string.</param>
         /// <param name="effects">Modificators for drawing. Can be combined.</param>
         /// <param name="layerDepth">A depth of the layer of this string.</param>
-        private unsafe void DrawString(
+        public unsafe void DrawString(
             SpriteFont spriteFont, CharacterSource text, Vector2 position, Color color,
             float rotation, Vector2 origin, Vector2 scale, SpriteEffects effects, float layerDepth)
         {
@@ -941,7 +941,7 @@ namespace Microsoft.Xna.Framework.Graphics
         /// <param name="effects">Modificators for drawing. Can be combined.</param>
         /// <param name="layerDepth">A depth of the layer of this string.</param>
         /// <param name="rtl">Text is Right to Left.</param>
-        private unsafe void DrawString(
+        public unsafe void DrawString(
             SpriteFont spriteFont, CharacterSource text,in Vector2 position, in Color color,
             in float rotation, Vector2 origin, Vector2 scale, SpriteEffects effects, float layerDepth, bool rtl)
         {

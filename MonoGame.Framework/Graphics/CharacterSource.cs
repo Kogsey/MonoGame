@@ -13,31 +13,23 @@ namespace Microsoft.Xna.Framework.Graphics
     /// <summary>
     /// Union like structure used to combine behaviour for character sequences.
     /// </summary>
-    [StructLayout(LayoutKind.Explicit, Pack = 4)]
     public readonly ref struct CharacterSource 
     {
-        [FieldOffset(0)]
         private readonly int _offset;
         /// <inheritdoc cref="string.Length"/>
-        [FieldOffset(1)]
         public readonly int Length;
-        [FieldOffset(2)]
         private readonly int _type;
 
         //These 4 are at the end since they have an unknown length at compile time (for AnyCPU)
-        [FieldOffset(3)]
-        private unsafe readonly nint _value;
-        [FieldOffset(3)]
         private readonly string _string;
-        [FieldOffset(3)]
         private readonly StringBuilder _builder;
-        [FieldOffset(3)]
         private readonly ReadOnlySpan<char> _span;
 
-        [SkipLocalsInit]
-        private CharacterSource(nint value, int offset, int length)
+        private CharacterSource(CharacterSource last, int offset, int length)
         {
-            _value = value;
+            _string = last._string;
+            _builder = last._builder;
+            _span = last._span;
             _offset = offset;
             Length = length;
         }
@@ -86,7 +78,7 @@ namespace Microsoft.Xna.Framework.Graphics
             {
                 (int offset, int length) = range.GetOffsetAndLength(Length);
                 offset += _offset;
-                return new CharacterSource(_value, offset, length);
+                return new CharacterSource(this, offset, length);
             }
         }
     }
