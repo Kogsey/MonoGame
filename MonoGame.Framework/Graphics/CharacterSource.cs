@@ -30,6 +30,7 @@ namespace Microsoft.Xna.Framework.Graphics
             _string = last._string;
             _builder = last._builder;
             _span = last._span;
+            _type = last._type;
             _offset = offset;
             Length = length;
         }
