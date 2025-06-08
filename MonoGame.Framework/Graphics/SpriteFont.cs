@@ -191,14 +191,7 @@ namespace Microsoft.Xna.Framework.Graphics
             return size;
         }
 
-        /// <summary>
-        /// Returns the size of a string when rendered in this font.
-        /// </summary>
-        /// <param name="text">The text to measure.</param>
-        /// <param name="offset">The start index of the text to measure.</param>
-        /// <param name="length">The start length of the text to measure.</param>
-        /// <returns>The size, in pixels, of 'text' when rendered in
-        /// this font.</returns>
+        /// <inheritdoc cref="MeasureString(string, int, int)"/>
         public Vector2 MeasureString(ReadOnlySpan<char> text, int offset = 0, int length = -1)
         {
             CharacterSource source = new(text, offset, length);
@@ -206,20 +199,39 @@ namespace Microsoft.Xna.Framework.Graphics
             return size;
         }
 
-        /// <summary>
-        /// Returns the size of the contents of a StringBuilder when
-        /// rendered in this font.
-        /// </summary>
-        /// <param name="text">The text to measure.</param>
-        /// <param name="offset">The start index of the text to measure.</param>
-        /// <param name="length">The start length of the text to measure.</param>
-        /// <returns>The size, in pixels, of 'text' when rendered in
-        /// this font.</returns>
+        /// <inheritdoc cref="MeasureString(string, int, int)"/>
         public Vector2 MeasureString(StringBuilder text, int offset = 0, int length = -1)
         {
             CharacterSource source = new(text, offset, length);
             MeasureString(source, out Vector2 size);
             return size;
+        }
+
+        /// <inheritdoc cref="MeasureString(string, int, int)"/>
+        public unsafe void MeasureString(CharacterSource text, out Vector2 size)
+        {
+            if (text.Length == 0)
+            {
+                size = Vector2.Zero;
+                return;
+            }
+
+            float width = 0.0f;
+            float finalLineHeight = (float)LineSpacing;
+
+            Vector2 offset = Vector2.Zero;
+            bool firstGlyphOfLine = true;
+
+            fixed (Glyph* pGlyphs = Glyphs)
+            {
+                for (int i = 0; i < text.Length; ++i)
+                {
+                    MeasureChar(text[i], ref width, ref finalLineHeight, ref offset, ref firstGlyphOfLine, pGlyphs);
+                }
+            }
+
+            size.X = width;
+            size.Y = offset.Y + finalLineHeight;
         }
 
         /// <summary>
@@ -289,32 +301,6 @@ namespace Microsoft.Xna.Framework.Graphics
             if (pCurrentGlyph->Cropping.Height > finalLineHeight)
                 finalLineHeight = pCurrentGlyph->Cropping.Height;
         }
-
-        internal unsafe void MeasureString(CharacterSource text, out Vector2 size)
-        {
-            if (text.Length == 0)
-            {
-                size = Vector2.Zero;
-                return;
-            }
-
-            float width = 0.0f;
-            float finalLineHeight = (float)LineSpacing;
-
-            Vector2 offset = Vector2.Zero;
-            bool firstGlyphOfLine = true;
-
-            fixed (Glyph* pGlyphs = Glyphs)
-            {
-                for (int i = 0; i < text.Length; ++i)
-                {
-                    MeasureChar(text[i], ref width, ref finalLineHeight, ref offset, ref firstGlyphOfLine, pGlyphs);
-                }
-            }
-
-            size.X = width;
-            size.Y = offset.Y + finalLineHeight;
-        }
         
         internal unsafe bool TryGetGlyphIndex(char c, out int index)
         {
@@ -371,7 +357,6 @@ namespace Microsoft.Xna.Framework.Graphics
         /// </summary>
         /// <remarks>Provides the data necessary to implement custom SpriteFont rendering.</remarks>
         public struct Glyph
-
         {
             /// <summary>
             /// The char associated with this glyph.
