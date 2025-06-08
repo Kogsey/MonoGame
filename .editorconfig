@@ -10,3 +10,6 @@ trim_trailing_whitespace = true
 [*.cs]
 indent_style = space
 indent_size = 4
+
+# IDE0011: Add braces
+csharp_prefer_braces = when_multiline
