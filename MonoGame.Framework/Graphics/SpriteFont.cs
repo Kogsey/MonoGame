@@ -323,32 +323,15 @@ namespace Microsoft.Xna.Framework.Graphics
             if (pCurrentGlyph->Cropping.Height > finalLineHeight)
                 finalLineHeight = pCurrentGlyph->Cropping.Height;
         }
-        
+
         internal unsafe bool TryGetGlyphIndex(char c, out int index)
         {
             fixed (CharacterRegion* pRegions = _regions)
             {
-                // Get region Index 
-                int regionIdx = -1;
-                int l = 0;
-                int r = _regions.Length - 1;
-                while (l <= r)
+                if (!TryGetRegionIdx(c, pRegions, out int regionIdx))
                 {
-                    int m = (l + r) >> 1;                    
-                    Debug.Assert(m >= 0 && m < _regions.Length, "Index was outside the bounds of the array.");
-                    if (pRegions[m].End < c)
-                    {
-                        l = m + 1;
-                    }
-                    else if (pRegions[m].Start > c)
-                    {
-                        r = m - 1;
-                    }
-                    else
-                    {
-                        regionIdx = m;
-                        break;
-                    }
+                    c = char.IsUpper(c) ? char.ToLower(c) : char.ToUpper(c);
+                    TryGetRegionIdx(c, pRegions, out regionIdx);
                 }
 
                 if (regionIdx == -1)
@@ -358,6 +341,39 @@ namespace Microsoft.Xna.Framework.Graphics
                 }
 
                 index = pRegions[regionIdx].StartIndex + (c - pRegions[regionIdx].Start);
+            }
+
+            return true;
+        }
+
+        private unsafe bool TryGetRegionIdx(char c, CharacterRegion* pRegions, out int regionIdx)
+        {
+            // Get region Index 
+            regionIdx = -1;
+            var l = 0;
+            var r = _regions.Length - 1;
+            while (l <= r)
+            {
+                var m = (l + r) >> 1;
+                Debug.Assert(m >= 0 && m < _regions.Length, "Index was outside the bounds of the array.");
+                if (pRegions[m].End < c)
+                {
+                    l = m + 1;
+                }
+                else if (pRegions[m].Start > c)
+                {
+                    r = m - 1;
+                }
+                else
+                {
+                    regionIdx = m;
+                    break;
+                }
+            }
+
+            if (regionIdx == -1)
+            {
+                return false;
             }
 
             return true;
