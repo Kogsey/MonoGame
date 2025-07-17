@@ -194,7 +194,7 @@ namespace Microsoft.Xna.Framework.Graphics
             item.Texture = texture;
 
             // set SortKey based on SpriteSortMode.
-            switch ( _sortMode )
+            switch (_sortMode)
             {
                 // Comparison of Texture objects.
                 case SpriteSortMode.Texture:
@@ -209,9 +209,9 @@ namespace Microsoft.Xna.Framework.Graphics
                     item.SortKey = -layerDepth;
                     break;
             }
-                        
+
             origin = origin * scale;
-            
+
             float w, h;
             if (sourceRectangle.HasValue)
             {
@@ -230,7 +230,7 @@ namespace Microsoft.Xna.Framework.Graphics
                 _texCoordTL = Vector2.Zero;
                 _texCoordBR = Vector2.One;
             }
-            
+
             if ((effects & SpriteEffects.FlipVertically) != 0)
             {
                 var temp = _texCoordBR.Y;
@@ -243,7 +243,7 @@ namespace Microsoft.Xna.Framework.Graphics
                 _texCoordBR.X = _texCoordTL.X;
                 _texCoordTL.X = temp;
             }
-            
+
             if (rotation == 0f)
             {
                 item.Set(position.X - origin.X,
@@ -270,7 +270,110 @@ namespace Microsoft.Xna.Framework.Graphics
                         _texCoordBR,
                         layerDepth);
             }
-            
+
+            FlushIfNeeded();
+        }
+
+
+        private void FlipHelper(in SpriteEffects effects, ref Vector2 _texCoordTL, ref Vector2 _texCoordTR, ref Vector2 _texCoordBL, ref Vector2 _texCoordBR)
+        {
+            bool flipDiagonally = (effects & SpriteEffects.FlipDiagonally) != 0;
+            bool flipHorizontally = (effects & SpriteEffects.FlipHorizontally) != 0;
+            bool flipVertically = (effects & SpriteEffects.FlipVertically) != 0;
+
+            if (flipDiagonally)
+            {
+                (_texCoordTR.X, _texCoordBL.X) = (_texCoordBL.X, _texCoordTR.X);
+                (_texCoordTR.Y, _texCoordBL.Y) = (_texCoordBL.Y, _texCoordTR.Y);
+            }
+
+            if (flipHorizontally)
+                if (flipDiagonally)
+                {
+                    (_texCoordTL.Y, _texCoordTR.Y) = (_texCoordTR.Y, _texCoordTL.Y);
+                    (_texCoordBL.Y, _texCoordBR.Y) = (_texCoordBR.Y, _texCoordBL.Y);
+                }
+                else
+                {
+                    (_texCoordTL.X, _texCoordTR.X) = (_texCoordTR.X, _texCoordTL.X);
+                    (_texCoordBL.X, _texCoordBR.X) = (_texCoordBR.X, _texCoordBL.X);
+                }
+
+            if (flipVertically)
+                if (flipDiagonally)
+                {
+                    (_texCoordTL.X, _texCoordBL.X) = (_texCoordBL.X, _texCoordTL.X);
+                    (_texCoordTR.X, _texCoordBR.X) = (_texCoordBR.X, _texCoordTR.X);
+                }
+                else
+                {
+                    (_texCoordTL.Y, _texCoordBL.Y) = (_texCoordBL.Y, _texCoordTL.Y);
+                    (_texCoordTR.Y, _texCoordBR.Y) = (_texCoordBR.Y, _texCoordTR.Y);
+                }
+        }
+
+        /// <summary>
+        /// Submit a sprite for drawing in the current batch. Draws unscaled.
+        /// </summary>
+        /// <param name="texture">A texture.</param>
+        /// <param name="position">The drawing location on screen.</param>
+        /// <param name="sourceRectangle"> A region on the texture which will be rendered.</param>
+        /// <param name="color">A color mask.</param>
+        /// <param name="effects">Modificators for drawing. Can be combined.</param>
+        /// <param name="layerDepth">A depth of the layer of this sprite.</param>
+        public void Draw_TileLike(Texture2D texture,
+                Vector2 position,
+                Rectangle sourceRectangle,
+                Color color,
+                SpriteEffects effects,
+                float layerDepth = 0f)
+        {
+            CheckValid(texture);
+            SpriteBatchItem item = _batcher.CreateBatchItem();
+            item.Texture = texture;
+
+            // set SortKey based on SpriteSortMode.
+            switch (_sortMode)
+            {
+                // Comparison of Texture objects.
+                case SpriteSortMode.Texture:
+                    item.SortKey = texture.SortingKey;
+                    break;
+                // Comparison of Depth
+                case SpriteSortMode.FrontToBack:
+                    item.SortKey = layerDepth;
+                    break;
+                // Comparison of Depth in reverse
+                case SpriteSortMode.BackToFront:
+                    item.SortKey = -layerDepth;
+                    break;
+            }
+
+            float width = sourceRectangle.Width;
+            float height = sourceRectangle.Height;
+
+            _texCoordTL.X = sourceRectangle.X * texture.TexelWidth;
+            _texCoordTL.Y = sourceRectangle.Y * texture.TexelHeight;
+
+            _texCoordBR.X = (sourceRectangle.X + sourceRectangle.Width) * texture.TexelWidth;
+            _texCoordBR.Y = (sourceRectangle.Y + sourceRectangle.Height) * texture.TexelHeight;
+
+            Vector2 _texCoordTR = new(_texCoordBR.X, _texCoordTL.Y);
+            Vector2 _texCoordBL = new(_texCoordTL.X, _texCoordBR.Y);
+
+            FlipHelper(in effects, ref _texCoordTL, ref _texCoordTR, ref _texCoordBL, ref _texCoordBR);
+
+            item.Set(position.X,
+                    position.Y,
+                    width,
+                    height,
+                    color,
+                    _texCoordTL,
+                    _texCoordTR,
+                    _texCoordBL,
+                    _texCoordBR,
+                    layerDepth);
+
             FlushIfNeeded();
         }
 

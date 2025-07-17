@@ -23,6 +23,10 @@ namespace Microsoft.Xna.Framework.Graphics
         /// <summary>
         /// Render the sprite reversed along the Y axis.
         /// </summary>
-        FlipVertically = 2
+        FlipVertically = 2,
+        /// <summary>
+        /// Render the sprite reversed along the XY axis.
+        /// </summary>
+        FlipDiagonally = 4,
     }
 }
