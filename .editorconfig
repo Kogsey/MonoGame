@@ -42,3 +42,10 @@ dotnet_diagnostic.CA1834.severity = warning
 
 #Specify StringComparison for correctness and performance.
 dotnet_diagnostic.CA1319.severity = warning
+
+## Hematite
+# IDE0011: Add braces
+csharp_prefer_braces = when_multiline
+
+# IDE0161: Convert to file-scoped namespace
+csharp_style_namespace_declarations = file_scoped

@@ -26,6 +26,7 @@ namespace Microsoft.Xna.Framework.Input
                 dialog.MaximizeBox = false;
                 dialog.ControlBox = false;
                 dialog.StartPosition = FormStartPosition.CenterParent;
+                dialog.AutoSize = true;
 
                 var desc = new Label();
                 desc.Text = description;
