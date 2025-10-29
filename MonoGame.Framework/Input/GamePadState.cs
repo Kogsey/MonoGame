@@ -129,6 +129,17 @@ namespace Microsoft.Xna.Framework.Input
         }
 
         /// <summary>
+        /// Determines whether any specified input device buttons are pressed in this <see cref="GamePadState"/>.
+        /// </summary>
+        /// <param name="buttons">Buttons to query. Specify a single button, or combine multiple buttons using a bitwise OR operation.</param>
+        /// <returns><c>true</c>, if any of the buttons were pressed, <c>false</c> otherwise.</returns>
+        public bool AnyButtonsDown(Buttons buttons)
+        {
+            if (buttons == Input.Buttons.None) return false;
+            return (GetVirtualButtons() & buttons) != 0;
+        }
+
+        /// <summary>
         /// Determines whether specified input device buttons are pressed in this GamePadState.
         /// </summary>
         /// <returns><c>true</c>, if button was pressed, <c>false</c> otherwise.</returns>
