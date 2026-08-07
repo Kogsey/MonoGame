@@ -1,4 +1,4 @@
-// MonoGame - Copyright (C) The MonoGame Team
+// MonoGame - Copyright (C) MonoGame Foundation, Inc
 // This file is subject to the terms and conditions defined in
 // file 'LICENSE.txt', which is part of this source code package.
 
@@ -107,6 +107,10 @@ internal class NativeGameWindow : GameWindow
 
         // Create the window which size may be changed by the platform.
         _handle = MGP.Window_Create(platform.Handle, ref _width, ref _height, title);
+        if (_handle == null)
+        {
+            throw new NoSuitableGraphicsDeviceException("Failed to initialize SDL window!");
+        }
 
         _windows[(nint)_handle] = this;
 
@@ -180,6 +184,10 @@ internal class NativeGameWindow : GameWindow
         _height = height;
 
         MGP.Window_SetClientSize(_handle, width, height);
+
+        _platform.Game.GraphicsDevice.PresentationParameters.BackBufferWidth = width;
+        _platform.Game.GraphicsDevice.PresentationParameters.BackBufferHeight = height;
+        _platform.Game.GraphicsDevice.Viewport = new Viewport(0, 0, width, height);
 
         OnClientSizeChanged();
     }
