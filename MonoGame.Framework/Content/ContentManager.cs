@@ -382,8 +382,6 @@ namespace Microsoft.Xna.Framework.Content
 			try
             {
                 string assetPath = Path.Combine(RootDirectory, assetName) + ".xnb";
-                if (FallBackGraphic != null && !File.Exists(assetPath))
-                    assetPath = FallBackGraphic + ".xnb";
 
                 // This is primarily for editor support.
                 // Setting the RootDirectory to an absolute path is useful in editor
@@ -773,11 +771,6 @@ namespace Microsoft.Xna.Framework.Content
 				_rootDirectory = value;
 			}
 		}
-
-        /// <summary>
-        /// Path of a texture to load if the texture does not exist.
-        /// </summary>
-        public string FallBackGraphic { get; set; }
 
         internal string RootDirectoryFullPath
         {
