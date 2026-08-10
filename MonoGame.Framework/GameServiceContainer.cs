@@ -23,8 +23,10 @@ namespace Microsoft.Xna.Framework
         /// <exception cref="ArgumentException"> If <paramref name="provider"/> cannot be assigned to <paramref name="type"/>. </exception>
         public void AddService(Type type, object provider)
         {
-            ArgumentNullException.ThrowIfNull(type);
-            ArgumentNullException.ThrowIfNull(provider);
+            if (type == null)
+                throw new ArgumentNullException(nameof(type));
+            if (provider == null)
+                throw new ArgumentNullException(nameof(provider));
             if (!ReflectionHelpers.IsAssignableFrom(type, provider))
                 throw new ArgumentException("The provider does not match the specified service type!");
 
@@ -39,8 +41,8 @@ namespace Microsoft.Xna.Framework
         /// <exception cref="ArgumentNullException"> If the specified type is <see langword="null"/>. </exception>
         public object GetService(Type type)
         {
-            ArgumentNullException.ThrowIfNull(type);
-
+            if (type == null)
+                throw new ArgumentNullException(nameof(type));
             if (services.TryGetValue(type, out object service))
                 return service;
             else
@@ -60,7 +62,8 @@ namespace Microsoft.Xna.Framework
         /// <exception cref="ArgumentNullException"> If the specified type is <see langword="null"/>. </exception>
         public void RemoveService(Type type)
         {
-            ArgumentNullException.ThrowIfNull(type);
+            if (type == null)
+                throw new ArgumentNullException(nameof(type));
             services.Remove(type);
         }
 
@@ -79,7 +82,7 @@ namespace Microsoft.Xna.Framework
         public T GetService<T>() where T : class
         {
             object service = GetService(typeof(T));
-            return service == null ? null : (T)service;
+            return (T)service;
         }
 
         /// <summary> Adds an <see cref="IServiceProvider"/> to the list of children this container will also check for values. </summary>
@@ -88,7 +91,8 @@ namespace Microsoft.Xna.Framework
         /// <exception cref="ArgumentNullException"> If <paramref name="provider"/> is <see langword="null"/>. </exception>
         public void AddServiceProvider(IServiceProvider provider)
         {
-            ArgumentNullException.ThrowIfNull(provider);
+            if (provider == null)
+                throw new ArgumentNullException(nameof(provider));
             if (childProviders.Contains(provider))
                 throw new ArgumentException($"Cannot add an {nameof(IServiceProvider)} that is already contained.", nameof(provider));
             childProviders.Add(provider);
@@ -100,7 +104,8 @@ namespace Microsoft.Xna.Framework
         /// <exception cref="ArgumentNullException"> If <paramref name="provider"/> is <see langword="null"/>. </exception>
         public void RemoveServiceProvider(IServiceProvider provider)
         {
-            ArgumentNullException.ThrowIfNull(provider);
+            if (provider == null)
+                throw new ArgumentNullException(nameof(provider));
             int index = childProviders.IndexOf(provider);
             if (index == -1)
                 throw new ArgumentException($"Cannot remove an {nameof(IServiceProvider)} that is not contained.", nameof(provider));
