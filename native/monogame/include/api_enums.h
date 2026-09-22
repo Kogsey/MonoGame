@@ -271,6 +271,12 @@ enum class MGProcessorType : mguint
     ZeroTransparentPixels = 1,
 };
 
+enum class MGSongEventType : mgint
+{
+    Completed = 0,
+    Failed = 1,
+};
+
 enum class MGGameRunBehavior : mgint
 {
     Asynchronous = 0,
@@ -521,6 +527,7 @@ enum class MGMonoGamePlatform : mgint
     PlayStation5 = 10,
     NintendoSwitch = 11,
     DesktopVK = 12,
+    NintendoSwitch2 = 13,
 };
 
 enum class MGGraphicsBackend : mgint
