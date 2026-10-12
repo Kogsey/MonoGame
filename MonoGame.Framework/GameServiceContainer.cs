@@ -66,6 +66,11 @@ namespace Microsoft.Xna.Framework
                 throw new ArgumentNullException(nameof(type));
             services.Remove(type);
         }
+        /// <summary> Remove the service with the specified type. Does nothing no service of the specified type is registered. </summary>
+        /// <typeparam name="T"> The type of the service to remove. </typeparam>
+        /// <exception cref="ArgumentNullException"> If the specified type is <see langword="null"/>. </exception>
+        public void RemoveService<T>()
+            => RemoveService(typeof(T));
 
         /// <summary> Add a service provider to this container. </summary>
         /// <typeparam name="T"> The type of the service. </typeparam>
